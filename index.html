@@ -10,14 +10,113 @@
     <meta name="apple-mobile-web-app-title" content="調査フォーム">
     <link rel="apple-touch-icon" href="icon-192.png">
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
-        iframe { width: 100%; height: 100%; border: none; }
-        body { overscroll-behavior-y: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
-        iframe { -webkit-overflow-scrolling: touch;}
-    </style>
+    :root {
+        /* Google Formの標準的な紫色（お好みの色に変更してください） */
+        --theme-color: #673ab7; 
+        --header-height: 44px;
+    }
+
+    /* 画面全体の基本設定 */
+    body, html { 
+        margin: 0; 
+        padding: 0; 
+        height: 100%; 
+        width: 100%;
+        overflow: hidden; /* 画面全体の不要なスクロールを防止 */
+        background-color: #f0ebf8; /* フォーム背景に近い色 */
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body { 
+        overscroll-behavior: none; /* iPhoneの引っ張り更新や戻る挙動を制御 */
+        -webkit-user-select: none; 
+        user-select: none; 
+        -webkit-tap-highlight-color: transparent; 
+    }
+
+    /* 自作ヘッダーの設定 */
+    #app-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+        background-color: rgba(255, 255, 255, 0.85); /* 高級感のある半透明 */
+        backdrop-filter: blur(15px); /* iOS風のすりガラス効果 */
+        -webkit-backdrop-filter: blur(15px);
+        border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+    }
+
+    /* iPhoneのノッチ（時計表示部分）の余白を自動確保 */
+    .safe-area {
+        height: env(safe-area-inset-top);
+    }
+
+    /* ヘッダー内のコンテンツ配置 */
+    .toolbar {
+        height: var(--header-height);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 16px;
+    }
+
+    .app-title {
+        font-size: 17px;
+        font-weight: 600;
+        color: #333;
+        margin: 0;
+        position: absolute; /* タイトルを中央に配置 */
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+    }
+
+    /* 更新ボタンの装飾 */
+    .icon-button {
+        background: none;
+        border: none;
+        color: var(--theme-color);
+        padding: 8px;
+        margin-left: auto; /* 右端に配置 */
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        transition: opacity 0.2s;
+    }
+    .icon-button:active { opacity: 0.5; }
+
+    /* メインコンテンツ（iframe）の調整 */
+    #content {
+        width: 100%;
+        height: 100vh;
+        /* ヘッダー + ノッチの分だけ上に隙間を作る */
+        padding-top: calc(env(safe-area-inset-top) + var(--header-height));
+        box-sizing: border-box;
+    }
+
+    iframe { 
+        width: 100%; 
+        height: 100%; 
+        border: none; 
+        -webkit-overflow-scrolling: touch; 
+    }
+</style>
 </head>
 <body>
-    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdRJewR3ZI3bnISFFbURmOq3SL1P6Wi5b3YjuPe1Oy0NAIejg/viewform">読み込み中...</iframe>
+    <header id="app-bar">
+        <div class="safe-area"></div> <div class="toolbar">
+            <div class="left-space"></div> <h1 class="app-title">アンケート回答</h1> <button class="icon-button" onclick="window.location.reload();" aria-label="更新">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"></path>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <main id="content">
+        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdRJewR3ZI3bnISFFbURmOq3SL1P6Wi5b3YjuPe1Oy0NAIejg/viewform?embedded=true">読み込み中...</iframe>
+    </main>
 
     <script>
         if ('serviceWorker' in navigator) {
